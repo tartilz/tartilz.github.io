@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tartil | Portfolio</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <div class="logo">Tartil</div>
+      <nav class="navbar">
+        <ul class="nav-links">
+          <li><a href="#home" class="nav-link active">Home</a></li>
+          <li><a href="#about" class="nav-link">About</a></li>
+          <li><a href="#achievements" class="nav-link">Achievements</a></li>
+          <li><a href="#contact" class="nav-link">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section id="home" class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <div class="profile-container">
+          <img src="https://drive.google.com/file/d/1c-mvwQAblpyHc1JEwzPhQzNqw-IC4a0i/view?usp=drivesdk" alt="Tartil" class="profile">
+        </div>
+        <div class="hero-text">
+          <h1 class="title">Hi, I'm <span>Tartil</span></h1>
+          <p class="subtitle">A passionate student & developer</p>
+          <div class="social">
+            <a href="https://www.facebook.com/share/16JMmu1YaE/" target="_blank" class="social-link">
+              <i class="fab fa-facebook"></i>
+            </a>
+            <a href="https://www.instagram.com/ohibd71/" target="_blank" class="social-link">
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a href="https://t.me/id_TARTIL" target="_blank" class="social-link">
+              <i class="fab fa-telegram"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="section">
+    <div class="container">
+      <h2 class="section-title">About Me</h2>
+      <div class="about-content">
+        <p>Hi ! I’m Tartil. I live at Mohangonj. I am a student & I study in class 10th (as of 2025) at MP Govt. School.</p>
+        <div class="skills">
+          <h3>My Skills</h3>
+          <div class="skill-tags">
+            <span class="skill-tag">HTML/CSS</span>
+            <span class="skill-tag">JavaScript</span>
+            <span class="skill-tag">Python</span>
+            <span class="skill-tag">Web Design</span>
+            <span class="skill-tag">UI/UX</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Achievements Section -->
+  <section id="achievements" class="section dark">
+    <div class="container">
+      <h2 class="section-title">Achievements</h2>
+      <div class="achievements-grid">
+        <div class="achievement-card">
+          <div class="achievement-icon">
+            <i class="fas fa-code"></i>
+          </div>
+          <h3>5+ Projects</h3>
+          <p>Built various websites</p>
+        </div>
+        <div class="achievement-card">
+          <div class="achievement-icon">
+            <i class="fas fa-trophy"></i>
+          </div>
+          <h3>Hackathon Winner</h3>
+          <p>Got Filler Certificate</p>
+        </div>
+        <div class="achievement-card">
+          <div class="achievement-icon">
+            <i class="fas fa-certificate"></i>
+          </div>
+          <h3>100 Days of Code</h3>
+          <p>Completed coding challenge</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="section">
+    <div class="container">
+      <h2 class="section-title">Get In Touch</h2>
+      <div class="contact-container">
+        <form class="contact-form" action="https://formspree.io/f/mqaqykzz" method="POST">
+          <div class="form-group">
+            <input type="text" name="name" placeholder="Your Name" required>
+          </div>
+          <div class="form-group">
+            <input type="email" name="email" placeholder="Your Email" required>
+          </div>
+          <div class="form-group">
+            <textarea name="message" placeholder="Your Message" required></textarea>
+          </div>
+          <button type="submit" class="submit-btn">
+            <span>Send Message</span>
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-logo">Tartil</div>
+        <div class="footer-social">
+          <a href="https://www.facebook.com/share/16JMmu1YaE/" target="_blank"><i class="fab fa-facebook"></i></a>
+          <a href="https://www.instagram.com/ohibd71/" target="_blank"><i class="fab fa-instagram"></i></a>
+          <a href="https://t.me/id_TARTIL" target="_blank"><i class="fab fa-telegram"></i></a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; <span id="year"></span> All rights reserved</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+  </html>
