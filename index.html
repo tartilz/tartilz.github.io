@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Video Player with Support Bot</title>
+    <style>
+        /* Prime Video Inspired Theme */
+        .prime-video-player {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 119, 182, 0.1);
+            font-family: 'Amazon Ember', Arial, sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .prime-header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .prime-logo {
+            margin-bottom: 15px;
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .prime-video-player:hover .prime-logo {
+            transform: translateY(-5px);
+        }
+
+        .prime-title {
+            color: #003554;
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .prime-input-container {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .prime-input {
+            flex: 1;
+            padding: 16px 20px;
+            background: #f8f9fa;
+            border: 2px solid #e0f3ff;
+            border-radius: 8px;
+            font-size: 16px;
+            color: #003554;
+            outline: none;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 2px 5px rgba(0, 119, 182, 0.05);
+        }
+
+        .prime-input:focus {
+            border-color: #00A8E1;
+            box-shadow: 0 0 0 3px rgba(0, 168, 225, 0.2);
+            background: white;
+        }
+
+        .prime-action-btn {
+            position: relative;
+            width: 140px;
+            padding: 0;
+            background: linear-gradient(135deg, #0077B6, #00A8E1);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 4px 15px rgba(0, 168, 225, 0.3);
+        }
+
+        .prime-action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 168, 225, 0.4);
+        }
+
+        .prime-action-btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-wave {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%, -50%);
+            transform-origin: 50% 50%;
+        }
+
+        .prime-action-btn:hover .btn-wave {
+            animation: wave 0.7s ease-out;
+        }
+
+        @keyframes wave {
+            0% {
+                transform: scale(1, 1) translate(-50%, -50%);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(50, 50) translate(-50%, -50%);
+                opacity: 0;
+            }
+        }
+
+        .btn-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 16px 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .play-icon {
+            width: 20px;
+            height: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .prime-action-btn:hover .play-icon {
+            transform: scale(1.2);
+        }
+
+        .prime-player-wrapper {
+            position: relative;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #000;
+            aspect-ratio: 16/9;
+            box-shadow: 0 8px 25px rgba(0, 119, 182, 0.15);
+        }
+
+        .prime-video-element {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .prime-video-element.visible {
+            opacity: 1;
+        }
+
+        .prime-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(0, 55, 84, 0.7), rgba(0, 119, 182, 0.5));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .prime-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        .prime-overlay-text {
+            color: white;
+            font-size: 18px;
+            font-weight: 500;
+            text-align: center;
+            max-width: 80%;
+            margin-bottom: 15px;
+        }
+
+        .prime-buffering-bar {
+            width: 80%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .buffering-progress {
+            height: 100%;
+            width: 0%;
+            background: #00A8E1;
+            border-radius: 2px;
+            animation: buffering 1.5s infinite linear;
+        }
+
+        @keyframes buffering {
+            0% { transform: translateX(-100%); width: 30%; }
+            100% { transform: translateX(333%); width: 30%; }
+        }
+
+        .prime-control-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .prime-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            background: #e0f3ff;
+            color: #0077B6;
+        }
+
+        .status-loading {
+            animation: pulse 1.5s infinite;
+        }
+
+        .status-error {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+
+        .status-success {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .status-buffering {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .prime-hint {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #5f6c7b;
+            font-size: 14px;
+        }
+
+        .hint-icon {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Animations */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .prime-input-container {
+                flex-direction: column;
+            }
+            
+            .prime-action-btn {
+                width: 100%;
+            }
+            
+            .prime-title {
+                font-size: 20px;
+            }
+            
+            .chat-container {
+                width: 90%;
+                right: 5%;
+                bottom: 80px;
+            }
+            
+            .support-bot {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+
+        /* Support Bot Styles */
+        .support-bot {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #0077B6, #00A8E1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0, 119, 182, 0.3);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .support-bot:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(0, 119, 182, 0.4);
+        }
+
+        .support-bot-icon {
+            width: 30px;
+            height: 30px;
+            fill: white;
+        }
+
+        .chat-container {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 350px;
+            max-height: 60vh;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: none;
+            flex-direction: column;
+            z-index: 1001;
+            overflow: hidden;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .chat-container.active {
+            display: flex;
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #0077B6, #00A8E1);
+            color: white;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-header h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .close-chat {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message.bot {
+            align-items: flex-start;
+        }
+
+        .message.user {
+            align-items: flex-end;
+        }
+
+        .message-content {
+            padding: 10px 15px;
+            border-radius: 18px;
+            max-width: 80%;
+            font-size: 14px;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        .bot .message-content {
+            background: white;
+            border: 1px solid #e0f3ff;
+            color: #003554;
+            border-radius: 18px 18px 18px 4px;
+        }
+
+        .user .message-content {
+            background: #00A8E1;
+            color: white;
+            border-radius: 18px 18px 4px 18px;
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: #5f6c7b;
+            margin-top: 4px;
+        }
+
+        .chat-input-area {
+            padding: 15px;
+            border-top: 1px solid #e0f3ff;
+            display: flex;
+            gap: 10px;
+            background: white;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #e0f3ff;
+            border-radius: 20px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .send-btn {
+            background: #00A8E1;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .send-btn:hover {
+            background: #0077B6;
+        }
+
+        .send-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .quick-questions {
+            padding: 10px 15px;
+            border-top: 1px solid #e0f3ff;
+            background: #f8f9fa;
+        }
+
+        .quick-questions h4 {
+            margin: 0 0 10px 0;
+            font-size: 13px;
+            color: #5f6c7b;
+        }
+
+        .question-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .question-btn {
+            background: white;
+            border: 1px solid #e0f3ff;
+            border-radius: 15px;
+            padding: 6px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .question-btn:hover {
+            background: #e0f3ff;
+        }
+
+        .name-input-container {
+            padding: 15px;
+            background: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .name-input {
+            padding: 10px 15px;
+            border: 1px solid #e0f3ff;
+            border-radius: 20px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .submit-name-btn {
+            background: #00A8E1;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .submit-name-btn:hover {
+            background: #0077B6;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 10px 15px;
+            background: white;
+            border: 1px solid #e0f3ff;
+            border-radius: 18px;
+            max-width: 80%;
+            font-size: 14px;
+            margin-bottom: 15px;
+            align-items: center;
+            width: fit-content;
+        }
+
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            background: #5f6c7b;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 4px;
+            animation: typing 1s infinite ease-in-out;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="prime-video-player">
+        <div class="prime-header">
+            <div class="prime-logo">
+                <svg viewBox="0 0 100 30" width="120">
+                    <path fill="#00A8E1" d="M20,0h60c11,0,20,9,20,20v10H0V20C0,9,9,0,20,0z"/>
+                    <text x="50" y="22" text-anchor="middle" fill="white" font-family="Arial" font-weight="bold">VIDEO</text>
+                </svg>
+            </div>
+            <h1 class="prime-title">Video Player</h1>
+        </div>
+        
+        <div class="prime-input-container">
+            <input type="url" id="primeVideoUrl" placeholder="Enter video URL (MP4 or MKV only)" class="prime-input">
+            <button id="primeLoadBtn" class="prime-action-btn">
+                <span class="btn-wave"></span>
+                <span class="btn-content">
+                    <svg class="play-icon" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M8,5.14V19.14L19,12.14L8,5.14Z"/>
+                    </svg>
+                    <span>Load Video</span>
+                </span>
+            </button>
+        </div>
+        
+        <div class="prime-player-wrapper">
+            <video id="primeVideoPlayer" controls class="prime-video-element"></video>
+            <div class="prime-overlay" id="primeOverlay">
+                <div class="prime-spinner"></div>
+                <div class="prime-overlay-text" id="overlayText">Enter URL to begin</div>
+                <div class="prime-buffering-bar" id="bufferingBar">
+                    <div class="buffering-progress"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="prime-control-bar">
+            <div class="prime-status" id="primeStatus">Ready</div>
+            <div class="prime-hint">
+                <svg class="hint-icon" viewBox="0 0 24 24">
+                    <path fill="#00A8E1" d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"/>
+                </svg>
+                <span>Supports: MP4 and MKV formats only</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Support Bot Floating Button -->
+    <div class="support-bot" id="supportBot">
+        <svg class="support-bot-icon" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M19,19H5V5H19V19M17,17H7V7H17V17M15,15H9V9H15V15Z" />
+        </svg>
+    </div>
+
+    <!-- Chat Container -->
+    <div class="chat-container" id="chatContainer">
+        <div class="chat-header">
+            <h3>Video Player Support</h3>
+            <button class="close-chat" id="closeChat">×</button>
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">
+                <div class="message-content">Hello! I'm your support assistant. How can I help you today?</div>
+                <div class="message-time">Just now</div>
+            </div>
+        </div>
+        
+        <div class="name-input-container" id="nameInputContainer">
+            <p>Before we begin, what should I call you?</p>
+            <input type="text" class="name-input" id="userNameInput" placeholder="Enter your name">
+            <button class="submit-name-btn" id="submitNameBtn">Continue</button>
+        </div>
+        
+        <div class="typing-indicator" id="typingIndicator">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        
+        <div class="quick-questions" id="quickQuestions" style="display: none;">
+            <h4>Quick Questions:</h4>
+            <div class="question-buttons">
+                <button class="question-btn" data-question="How do I use this player?">How do I use this player?</button>
+                <button class="question-btn" data-question="What formats are supported?">What formats are supported?</button>
+                <button class="question-btn" data-question="Why is my video not loading?">Why is my video not loading?</button>
+                <button class="question-btn" data-question="Can I play local files?">Can I play local files?</button>
+            </div>
+        </div>
+        
+        <div class="chat-input-area" id="chatInputArea" style="display: none;">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Type your message...">
+            <button class="send-btn" id="sendBtn">
+                <svg viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M2,21L23,12L2,3V10L17,12L2,14V21Z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div style="max-width: 900px; margin: 0 auto 30px auto; padding: 20px; background: #f8f9fa; border-radius: 8px; font-family: Arial, sans-serif;">
+        <h3 style="color: #003554; margin-top: 0;">Why This Stands Out</h3>
+        <p style="margin-bottom: 0; color: #333;">Unlike basic players, this one feels like a premium streaming service with:</p>
+        <ul style="margin-top: 10px; padding-left: 20px; color: #333;">
+            <li>✅ Smooth animations</li>
+            <li>✅ Clear buffering feedback</li>
+            <li>✅ Prime Video's polished look</li>
+            <li>✅ Works with any direct video URL</li>
+            <li>✅ Supports MP4 and MKV formats only</li>
+            <li>✅ Integrated support assistant</li>
+        </ul>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Video Player Elements
+            const videoPlayer = document.getElementById('primeVideoPlayer');
+            const videoInput = document.getElementById('primeVideoUrl');
+            const loadBtn = document.getElementById('primeLoadBtn');
+            const statusIndicator = document.getElementById('primeStatus');
+            const playerOverlay = document.getElementById('primeOverlay');
+            const overlayText = document.getElementById('overlayText');
+            const bufferingBar = document.getElementById('bufferingBar');
+            
+            // Support Bot Elements
+            const supportBot = document.getElementById('supportBot');
+            const chatContainer = document.getElementById('chatContainer');
+            const closeChat = document.getElementById('closeChat');
+            const chatMessages = document.getElementById('chatMessages');
+            const chatInput = document.getElementById('chatInput');
+            const sendBtn = document.getElementById('sendBtn');
+            const quickQuestions = document.getElementById('quickQuestions');
+            const questionBtns = document.querySelectorAll('.question-btn');
+            const nameInputContainer = document.getElementById('nameInputContainer');
+            const userNameInput = document.getElementById('userNameInput');
+            const submitNameBtn = document.getElementById('submitNameBtn');
+            const chatInputArea = document.getElementById('chatInputArea');
+            const typingIndicator = document.getElementById('typingIndicator');
+            
+            // State variables
+            let isBuffering = false;
+            let bufferingTimeout;
+            let userName = '';
+            let botResponses = {
+                "How do I use this player?": "Simply paste a direct URL to an MP4 or MKV video file in the input field and click 'Load Video'. The player will handle the rest!",
+                "What formats are supported?": "This player supports MP4 and MKV video formats only. Please make sure your URL ends with .mp4 or .mkv.",
+                "Why is my video not loading?": "There could be several reasons: 1) The URL might be incorrect, 2) The server might not allow direct access, 3) The file might not be an MP4 or MKV, or 4) There might be network issues.",
+                "Can I play local files?": "This player is designed for online URLs. To play local files, you would need to host them on a local server or use a file input method (not currently implemented in this player).",
+                "default": "I'm sorry, I didn't understand that. Could you try asking in a different way? Here are some quick questions you can ask:"
+            };
+            
+            // Animation for button click
+            loadBtn.addEventListener('mousedown', function() {
+                this.style.transform = 'translateY(1px)';
+            });
+            
+            loadBtn.addEventListener('mouseup', function() {
+                this.style.transform = 'translateY(-2px)';
+            });
+            
+            // Load video function
+            function loadVideo() {
+                const videoUrl = videoInput.value.trim();
+                
+                // Reset UI
+                videoPlayer.classList.remove('visible');
+                statusIndicator.className = 'prime-status';
+                overlayText.textContent = 'Loading video...';
+                hideBuffering();
+                
+                // Validate URL
+                if (!videoUrl) {
+                    showStatus('Please enter URL', 'status-error');
+                    overlayText.textContent = 'Enter video URL above';
+                    animateError();
+                    return;
+                }
+                
+                // Check for valid MP4 or MKV extension
+                const validExtensions = ['.mp4', '.mkv'];
+                const isValidExtension = validExtensions.some(ext => videoUrl.toLowerCase().endsWith(ext));
+                
+                if (!isValidExtension) {
+                    showStatus('Invalid format', 'status-error');
+                    overlayText.textContent = 'Only MP4 and MKV formats supported';
+                    animateError();
+                    return;
+                }
+                
+                // Start loading
+                showStatus('Connecting...', 'status-loading');
+                loadBtn.disabled = true;
+                playerOverlay.style.display = 'flex';
+                
+                // Set video source
+                videoPlayer.src = videoUrl;
+                videoPlayer.load();
+                
+                // Event handlers
+                videoPlayer.onerror = function() {
+                    showStatus('Load failed', 'status-error');
+                    overlayText.textContent = 'Error loading video';
+                    loadBtn.disabled = false;
+                    animateError();
+                    hideBuffering();
+                };
+                
+                videoPlayer.oncanplay = function() {
+                    showStatus('Ready', 'status-success');
+                    videoPlayer.classList.add('visible');
+                    loadBtn.disabled = false;
+                    hideBuffering();
+                    
+                    // Try autoplay
+                    videoPlayer.play().then(() => {
+                        playerOverlay.style.opacity = '0';
+                        setTimeout(() => {
+                            playerOverlay.style.display = 'none';
+                        }, 300);
+                    }).catch(() => {
+                        overlayText.textContent = 'Click play to start';
+                    });
+                };
+                
+                // Buffering detection
+                videoPlayer.onwaiting = function() {
+                    showBuffering();
+                };
+                
+                videoPlayer.onplaying = function() {
+                    hideBuffering();
+                };
+                
+                // Progress tracking
+                videoPlayer.onprogress = function() {
+                    if (videoPlayer.buffered.length > 0) {
+                        const bufferedEnd = videoPlayer.buffered.end(videoPlayer.buffered.length - 1);
+                        const duration = videoPlayer.duration;
+                        if (duration > 0) {
+                            const percent = (bufferedEnd / duration) * 100;
+                            updateBufferingProgress(percent);
+                        }
+                    }
+                };
+            }
+            
+            function showBuffering() {
+                if (!isBuffering) {
+                    isBuffering = true;
+                    showStatus('Buffering...', 'status-buffering');
+                    bufferingBar.style.display = 'block';
+                    playerOverlay.style.display = 'flex';
+                    overlayText.textContent = 'Buffering video...';
+                    
+                    // Show buffering bar animation
+                    clearTimeout(bufferingTimeout);
+                    bufferingTimeout = setTimeout(() => {
+                        if (isBuffering) {
+                            overlayText.textContent = 'Slow connection detected';
+                        }
+                    }, 5000);
+                }
+            }
+            
+            function hideBuffering() {
+                if (isBuffering) {
+                    isBuffering = false;
+                    bufferingBar.style.display = 'none';
+                    clearTimeout(bufferingTimeout);
+                }
+            }
+            
+            function updateBufferingProgress(percent) {
+                // Optional: You can use this to show actual buffering progress
+                // console.log('Buffered: ' + percent + '%');
+            }
+            
+            function showStatus(text, className) {
+                statusIndicator.textContent = text;
+                statusIndicator.className = 'prime-status ' + className;
+            }
+            
+            function animateError() {
+                videoInput.style.animation = 'shake 0.5s';
+                setTimeout(() => {
+                    videoInput.style.animation = '';
+                }, 500);
+            }
+            
+            // Support Bot Functions
+            function addMessage(sender, text) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender}`;
+                
+                const messageContent = document.createElement('div');
+                messageContent.className = 'message-content';
+                messageContent.textContent = text;
+                
+                const messageTime = document.createElement('div');
+                messageTime.className = 'message-time';
+                messageTime.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                messageDiv.appendChild(messageContent);
+                messageDiv.appendChild(messageTime);
+                chatMessages.appendChild(messageDiv);
+                
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            function showTypingIndicator() {
+                typingIndicator.style.display = 'flex';
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            function hideTypingIndicator() {
+                typingIndicator.style.display = 'none';
+            }
+            
+            function handleBotResponse(userMessage) {
+                showTypingIndicator();
+                
+                setTimeout(() => {
+                    hideTypingIndicator();
+                    
+                    let response = botResponses[userMessage] || botResponses['default'];
+                    
+                    if (userName) {
+                        response = response.replace(/your/g, `${userName}'s`);
+                    }
+                    
+                    addMessage('bot', response);
+                    
+                    // Show quick questions if it's the default response
+                    if (response === botResponses['default']) {
+                        showQuickQuestions();
+                    }
+                }, 3000); // 3 second delay for bot response
+            }
+            
+            function showQuickQuestions() {
+                quickQuestions.style.display = 'block';
+            }
+            
+            function hideQuickQuestions() {
+                quickQuestions.style.display = 'none';
+            }
+            
+            function handleNameSubmission() {
+                userName = userNameInput.value.trim();
+                if (userName) {
+                    addMessage('bot', `Nice to meet you, ${userName}! How can I help you with the video player?`);
+                    nameInputContainer.style.display = 'none';
+                    chatInputArea.style.display = 'flex';
+                    quickQuestions.style.display = 'block';
+                }
+            }
+            
+            // Event listeners for video player
+            loadBtn.addEventListener('click', loadVideo);
+            
+            videoInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    loadVideo();
+                }
+            });
+            
+            // Event listeners for support bot
+            supportBot.addEventListener('click', function() {
+                chatContainer.classList.add('active');
+                this.style.display = 'none';
+            });
+            
+            closeChat.addEventListener('click', function() {
+                chatContainer.classList.remove('active');
+                supportBot.style.display = 'flex';
+            });
+            
+            submitNameBtn.addEventListener('click', handleNameSubmission);
+            
+            userNameInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    handleNameSubmission();
+                }
+            });
+            
+            sendBtn.addEventListener('click', function() {
+                const message = chatInput.value.trim();
+                if (message) {
+                    addMessage('user', message);
+                    chatInput.value = '';
+                    handleBotResponse(message);
+                    hideQuickQuestions();
+                }
+            });
+            
+            chatInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendBtn.click();
+                }
+            });
+            
+            questionBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const question = this.getAttribute('data-question');
+                    addMessage('user', question);
+                    handleBotResponse(question);
+                    hideQuickQuestions();
+                });
+            });
+            
+            // Add shake animation for errors
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes shake {
+                    0%, 100% { transform: translateX(0); }
+                    20% { transform: translateX(-5px); }
+                    40% { transform: translateX(5px); }
+                    60% { transform: translateX(-5px); }
+                    80% { transform: translateX(5px); }
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+  </html>
