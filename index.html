@@ -1,0 +1,533 @@
+<div class="prime-video-player">
+  <div class="prime-header">
+    <div class="prime-logo">
+      <svg viewBox="0 0 100 30" width="120">
+        <path fill="#00A8E1" d="M20,0h60c11,0,20,9,20,20v10H0V20C0,9,9,0,20,0z"/>
+        <text x="50" y="22" text-anchor="middle" fill="white" font-family="Arial" font-weight="bold">VIDEO</text>
+      </svg>
+    </div>
+    <h1 class="prime-title">Video Player</h1>
+  </div>
+  
+  <div class="prime-input-container">
+    <input type="url" id="primeVideoUrl" placeholder="Enter video URL (MP4, WebM, OGG, MKV, Pixeldrain)" class="prime-input">
+    <button id="primeLoadBtn" class="prime-action-btn">
+      <span class="btn-wave"></span>
+      <span class="btn-content">
+        <svg class="play-icon" viewBox="0 0 24 24">
+          <path fill="currentColor" d="M8,5.14V19.14L19,12.14L8,5.14Z"/>
+        </svg>
+        <span>Load Video</span>
+      </span>
+    </button>
+  </div>
+  
+  <div class="prime-player-wrapper">
+    <video id="primeVideoPlayer" controls class="prime-video-element"></video>
+    <div class="prime-overlay" id="primeOverlay">
+      <div class="prime-spinner"></div>
+      <div class="prime-overlay-text" id="overlayText">Enter URL to begin</div>
+      <div class="prime-buffering-bar" id="bufferingBar">
+        <div class="buffering-progress"></div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="prime-control-bar">
+    <div class="prime-status" id="primeStatus">Ready</div>
+    <div class="prime-hint">
+      <svg class="hint-icon" viewBox="0 0 24 24">
+        <path fill="#00A8E1" d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"/>
+      </svg>
+      <span>Supports: MP4, WebM, OGG, MKV formats & Pixeldrain URLs</span>
+    </div>
+  </div>
+</div>
+
+<style>
+/* Prime Video Inspired Theme */
+.prime-video-player {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 30px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 119, 182, 0.1);
+  font-family: 'Amazon Ember', Arial, sans-serif;
+  overflow: hidden;
+  position: relative;
+}
+
+.prime-header {
+  text-align: center;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.prime-logo {
+  margin-bottom: 15px;
+  transform: translateY(0);
+  transition: transform 0.3s ease;
+}
+
+.prime-video-player:hover .prime-logo {
+  transform: translateY(-5px);
+}
+
+.prime-title {
+  color: #003554;
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.prime-input-container {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 25px;
+}
+
+.prime-input {
+  flex: 1;
+  padding: 16px 20px;
+  background: #f8f9fa;
+  border: 2px solid #e0f3ff;
+  border-radius: 8px;
+  font-size: 16px;
+  color: #003554;
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 2px 5px rgba(0, 119, 182, 0.05);
+}
+
+.prime-input:focus {
+  border-color: #00A8E1;
+  box-shadow: 0 0 0 3px rgba(0, 168, 225, 0.2);
+  background: white;
+}
+
+.prime-action-btn {
+  position: relative;
+  width: 140px;
+  padding: 0;
+  background: linear-gradient(135deg, #0077B6, #00A8E1);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 4px 15px rgba(0, 168, 225, 0.3);
+}
+
+.prime-action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 168, 225, 0.4);
+}
+
+.prime-action-btn:active {
+  transform: translateY(0);
+}
+
+.btn-wave {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  border-radius: 100%;
+  transform: scale(1, 1) translate(-50%, -50%);
+  transform-origin: 50% 50%;
+}
+
+.prime-action-btn:hover .btn-wave {
+  animation: wave 0.7s ease-out;
+}
+
+@keyframes wave {
+  0% {
+    transform: scale(1, 1) translate(-50%, -50%);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(50, 50) translate(-50%, -50%);
+    opacity: 0;
+  }
+}
+
+.btn-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 0;
+  position: relative;
+  z-index: 1;
+}
+
+.play-icon {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.3s ease;
+}
+
+.prime-action-btn:hover .play-icon {
+  transform: scale(1.2);
+}
+
+.prime-player-wrapper {
+  position: relative;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #000;
+  aspect-ratio: 16/9;
+  box-shadow: 0 8px 25px rgba(0, 119, 182, 0.15);
+}
+
+.prime-video-element {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.prime-video-element.visible {
+  opacity: 1;
+}
+
+.prime-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(rgba(0, 55, 84, 0.7), rgba(0, 119, 182, 0.5));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.prime-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
+}
+
+.prime-overlay-text {
+  color: white;
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+  max-width: 80%;
+  margin-bottom: 15px;
+}
+
+.prime-buffering-bar {
+  width: 80%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  overflow: hidden;
+  display: none;
+}
+
+.buffering-progress {
+  height: 100%;
+  width: 0%;
+  background: #00A8E1;
+  border-radius: 2px;
+  animation: buffering 1.5s infinite linear;
+}
+
+@keyframes buffering {
+  0% { transform: translateX(-100%); width: 30%; }
+  100% { transform: translateX(333%); width: 30%; }
+}
+
+.prime-control-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.prime-status {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  background: #e0f3ff;
+  color: #0077B6;
+}
+
+.status-loading {
+  animation: pulse 1.5s infinite;
+}
+
+.status-error {
+  background: #ffebee;
+  color: #d32f2f;
+}
+
+.status-success {
+  background: #e8f5e9;
+  color: #388e3c;
+}
+
+.status-buffering {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.prime-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #5f6c7b;
+  font-size: 14px;
+}
+
+.hint-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* Animations */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .prime-input-container {
+    flex-direction: column;
+  }
+  
+  .prime-action-btn {
+    width: 100%;
+  }
+  
+  .prime-title {
+    font-size: 20px;
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Elements
+  const videoPlayer = document.getElementById('primeVideoPlayer');
+  const videoInput = document.getElementById('primeVideoUrl');
+  const loadBtn = document.getElementById('primeLoadBtn');
+  const statusIndicator = document.getElementById('primeStatus');
+  const playerOverlay = document.getElementById('primeOverlay');
+  const overlayText = document.getElementById('overlayText');
+  const bufferingBar = document.getElementById('bufferingBar');
+  
+  // State variables
+  let isBuffering = false;
+  let bufferingTimeout;
+  
+  // Animation for button click
+  loadBtn.addEventListener('mousedown', function() {
+    this.style.transform = 'translateY(1px)';
+  });
+  
+  loadBtn.addEventListener('mouseup', function() {
+    this.style.transform = 'translateY(-2px)';
+  });
+  
+  // Load video function
+  function loadVideo() {
+    const videoUrl = videoInput.value.trim();
+    
+    // Reset UI
+    videoPlayer.classList.remove('visible');
+    statusIndicator.className = 'prime-status';
+    overlayText.textContent = 'Loading video...';
+    hideBuffering();
+    
+    // Validate URL
+    if (!videoUrl) {
+      showStatus('Please enter URL', 'status-error');
+      overlayText.textContent = 'Enter video URL above';
+      animateError();
+      return;
+    }
+    
+    // Check if this is a Pixeldrain URL and modify it if needed
+    let finalVideoUrl = videoUrl;
+    if (videoUrl.includes('pixeldrain.net/api/file/') && !videoUrl.includes('download')) {
+      finalVideoUrl = videoUrl.includes('?') 
+        ? videoUrl + '&download' 
+        : videoUrl + '?download';
+    }
+    
+    const validExtensions = ['.mp4', '.webm', '.ogg', '.mkv'];
+    const isValidExtension = validExtensions.some(ext => finalVideoUrl.toLowerCase().endsWith(ext));
+    const isPixeldrainUrl = finalVideoUrl.includes('pixeldrain.net/api/file/');
+    
+    if (!isValidExtension && !isPixeldrainUrl) {
+      showStatus('Invalid format', 'status-error');
+      overlayText.textContent = 'Only MP4/WebM/OGG/MKV or Pixeldrain URLs supported';
+      animateError();
+      return;
+    }
+    
+    // Start loading
+    showStatus('Connecting...', 'status-loading');
+    loadBtn.disabled = true;
+    playerOverlay.style.display = 'flex';
+    
+    // Set video source
+    videoPlayer.src = finalVideoUrl;
+    videoPlayer.load();
+    
+    // Event handlers
+    videoPlayer.onerror = function() {
+      showStatus('Load failed', 'status-error');
+      overlayText.textContent = 'Error loading video';
+      loadBtn.disabled = false;
+      animateError();
+      hideBuffering();
+    };
+    
+    videoPlayer.oncanplay = function() {
+      showStatus('Ready', 'status-success');
+      videoPlayer.classList.add('visible');
+      loadBtn.disabled = false;
+      hideBuffering();
+      
+      // Try autoplay
+      videoPlayer.play().then(() => {
+        playerOverlay.style.opacity = '0';
+        setTimeout(() => {
+          playerOverlay.style.display = 'none';
+        }, 300);
+      }).catch(() => {
+        overlayText.textContent = 'Click play to start';
+      });
+    };
+    
+    // Buffering detection
+    videoPlayer.onwaiting = function() {
+      showBuffering();
+    };
+    
+    videoPlayer.onplaying = function() {
+      hideBuffering();
+    };
+    
+    // Progress tracking
+    videoPlayer.onprogress = function() {
+      if (videoPlayer.buffered.length > 0) {
+        const bufferedEnd = videoPlayer.buffered.end(videoPlayer.buffered.length - 1);
+        const duration = videoPlayer.duration;
+        if (duration > 0) {
+          const percent = (bufferedEnd / duration) * 100;
+          updateBufferingProgress(percent);
+        }
+      }
+    };
+  }
+  
+  function showBuffering() {
+    if (!isBuffering) {
+      isBuffering = true;
+      showStatus('Buffering...', 'status-buffering');
+      bufferingBar.style.display = 'block';
+      playerOverlay.style.display = 'flex';
+      overlayText.textContent = 'Buffering video...';
+      
+      // Show buffering bar animation
+      clearTimeout(bufferingTimeout);
+      bufferingTimeout = setTimeout(() => {
+        if (isBuffering) {
+          overlayText.textContent = 'Slow connection detected';
+        }
+      }, 5000);
+    }
+  }
+  
+  function hideBuffering() {
+    if (isBuffering) {
+      isBuffering = false;
+      bufferingBar.style.display = 'none';
+      clearTimeout(bufferingTimeout);
+    }
+  }
+  
+  function updateBufferingProgress(percent) {
+    // Optional: You can use this to show actual buffering progress
+    // console.log('Buffered: ' + percent + '%');
+  }
+  
+  function showStatus(text, className) {
+    statusIndicator.textContent = text;
+    statusIndicator.className = 'prime-status ' + className;
+  }
+  
+  function animateError() {
+    videoInput.style.animation = 'shake 0.5s';
+    setTimeout(() => {
+      videoInput.style.animation = '';
+    }, 500);
+  }
+  
+  // Event listeners
+  loadBtn.addEventListener('click', loadVideo);
+  
+  videoInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      loadVideo();
+    }
+  });
+  
+  // Add shake animation for errors
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-5px); }
+      40% { transform: translateX(5px); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(5px); }
+    }
+  `;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- Added description section below all existing code -->
+<div style="max-width: 900px; margin: 0 auto 30px auto; padding: 20px; background: #f8f9fa; border-radius: 8px; font-family: Arial, sans-serif;">
+  <h3 style="color: #003554; margin-top: 0;">Why This Stands Out</h3>
+  <p style="margin-bottom: 0; color: #333;">Unlike basic players, this one feels like a premium streaming service with:</p>
+  <ul style="margin-top: 10px; padding-left: 20px; color: #333;">
+    <li>✅ Smooth animations</li>
+    <li>✅ Clear buffering feedback</li>
+    <li>✅ Prime Video's polished look</li>
+    <li>✅ Works with any direct video URL including Pixeldrain</li>
+    <li>✅ Supports MP4, WebM, OGG, and MKV formats</li>
+  </ul>
+</div>
