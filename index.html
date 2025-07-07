@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Love Animation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            overflow: hidden;
+        }
+        
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+        
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            color: #e74c3c;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 400;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: all 0.3s;
+        }
+        
+        input:focus {
+            border-color: #e74c3c;
+            box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2);
+        }
+        
+        button {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        button:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        #animation-container {
+            margin-top: 30px;
+            height: 400px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            background-color: rgba(248, 248, 248, 0.9);
+            display: none;
+            perspective: 1000px;
+        }
+        
+        .floating-heart {
+            position: absolute;
+            font-size: 24px;
+            color: #e74c3c;
+            animation: float 6s infinite ease-in-out;
+            opacity: 0;
+            z-index: 1;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(10deg); }
+        }
+        
+        .name-display {
+            position: absolute;
+            font-size: 32px;
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: #e74c3c;
+            opacity: 0;
+            transition: all 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 2;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .love-message {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            font-family: 'Dancing Script', cursive;
+            font-size: 32px;
+            color: #e74c3c;
+            top: 70%;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 1s ease-out;
+            z-index: 3;
+        }
+        
+        .pulse {
+            animation: pulse 1.5s infinite alternate;
+        }
+        
+        @keyframes pulse {
+            0% { transform: translate(-50%, 0) scale(1); }
+            100% { transform: translate(-50%, 0) scale(1.1); }
+        }
+        
+        .sparkle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle, #fff 0%, #ffeb3b 70%, #ff9800 100%);
+            border-radius: 50%;
+            opacity: 0;
+            animation: sparkle 1.2s ease-out;
+            z-index: 2;
+            box-shadow: 0 0 10px 2px #ffeb3b;
+        }
+        
+        @keyframes sparkle {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(2); opacity: 0.9; }
+            100% { transform: scale(0); opacity: 0; }
+        }
+        
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(145deg, rgba(255,235,59,0.8) 0%, rgba(255,152,0,0.8) 100%);
+            opacity: 0;
+            z-index: 1;
+        }
+        
+        .heartbeat {
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes heartbeat {
+            0% { transform: translate(-50%, 0) scale(1); }
+            25% { transform: translate(-50%, 0) scale(1.1); }
+            50% { transform: translate(-50%, 0) scale(1); }
+            75% { transform: translate(-50%, 0) scale(1.1); }
+            100% { transform: translate(-50%, 0) scale(1); }
+        }
+        
+        .floating-text {
+            position: absolute;
+            font-family: 'Dancing Script', cursive;
+            color: rgba(231, 76, 60, 0.7);
+            opacity: 0;
+            z-index: 1;
+            animation: float-up 8s linear forwards;
+        }
+        
+        @keyframes float-up {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-200px) rotate(10deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Love Story Animation</h1>
+        <p>Create your personalized romantic moment</p>
+        
+        <div class="input-group">
+            <label for="name1">Your Name</label>
+            <input type="text" id="name1" placeholder="Enter your name">
+        </div>
+        
+        <div class="input-group">
+            <label for="name2">Your Beloved's Name</label>
+            <input type="text" id="name2" placeholder="Enter their name">
+        </div>
+        
+        <button id="generate-btn">Create Magic</button>
+        
+        <div id="animation-container"></div>
+    </div>
+
+    <audio id="violin-music" preload="auto">
+        <source src="https://dl.prokerala.com/downloads/ringtones/files/dl/mp3/taqdeer-movie-violin-ringtone-download-45277.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="heart-sound" preload="auto">
+        <source src="https://www.soundjay.com/human/sounds/heartbeat-01.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        document.getElementById('generate-btn').addEventListener('click', function() {
+            const name1 = document.getElementById('name1').value.trim();
+            const name2 = document.getElementById('name2').value.trim();
+            
+            if (!name1 || !name2) {
+                alert('Please enter both names');
+                return;
+            }
+            
+            createLoveAnimation(name1, name2);
+        });
+        
+        function createLoveAnimation(name1, name2) {
+            const container = document.getElementById('animation-container');
+            const violinMusic = document.getElementById('violin-music');
+            const heartSound = document.getElementById('heart-sound');
+            
+            container.style.display = 'block';
+            container.innerHTML = '';
+            
+            // Create floating hearts background
+            for (let i = 0; i < 40; i++) {
+                createFloatingHeart(container, i * 100);
+            }
+            
+            // Create name displays
+            const nameDisplay1 = document.createElement('div');
+            nameDisplay1.className = 'name-display';
+            nameDisplay1.textContent = name1;
+            nameDisplay1.style.left = '20%';
+            nameDisplay1.style.top = '30%';
+            nameDisplay1.style.transform = 'translateY(30px)';
+            container.appendChild(nameDisplay1);
+            
+            const nameDisplay2 = document.createElement('div');
+            nameDisplay2.className = 'name-display';
+            nameDisplay2.textContent = name2;
+            nameDisplay2.style.right = '20%';
+            nameDisplay2.style.top = '30%';
+            nameDisplay2.style.transform = 'translateY(30px)';
+            container.appendChild(nameDisplay2);
+            
+            // Create love message
+            const loveMessage = document.createElement('div');
+            loveMessage.className = 'love-message';
+            loveMessage.textContent = 'Together Forever';
+            container.appendChild(loveMessage);
+            
+            // Play violin music after 1 second
+            setTimeout(() => {
+                violinMusic.currentTime = 0;
+                violinMusic.play();
+            }, 1000);
+            
+            // Animation timeline with sound effects every 4 seconds
+            const timeline = [
+                // 0-4 seconds - First name appears
+                { time: 1000, action: () => { 
+                    nameDisplay1.style.opacity = '1';
+                    nameDisplay1.style.transform = 'translateY(0)';
+                    createSparkleBurst(container, getPosition(nameDisplay1), 30);
+                    heartSound.play();
+                    createFloatingText(container, "Destiny", getPosition(nameDisplay1));
+                }},
+                
+                // 4-8 seconds - Second name appears
+                { time: 5000, action: () => { 
+                    nameDisplay2.style.opacity = '1';
+                    nameDisplay2.style.transform = 'translateY(0)';
+                    createSparkleBurst(container, getPosition(nameDisplay2), 30);
+                    heartSound.play();
+                    createFloatingText(container, "Soulmate", getPosition(nameDisplay2));
+                }},
+                
+                // 8-12 seconds - Connection appears
+                { time: 9000, action: () => {
+                    const plus = document.createElement('div');
+                    plus.className = 'name-display pulse';
+                    plus.textContent = '♥';
+                    plus.style.left = '50%';
+                    plus.style.top = '30%';
+                    plus.style.transform = 'translate(-50%, 0)';
+                    plus.style.fontSize = '40px';
+                    container.appendChild(plus);
+                    plus.style.opacity = '1';
+                    
+                    createParticleConnection(container, 
+                        getPosition(nameDisplay1), 
+                        getPosition(nameDisplay2),
+                        50
+                    );
+                    
+                    heartSound.play();
+                    createFloatingText(container, "Love", {x: '50%', y: '30%'});
+                }},
+                
+                // 12-16 seconds - Big heart appears
+                { time: 13000, action: () => {
+                    const bigHeart = document.createElement('div');
+                    bigHeart.className = 'name-display heartbeat';
+                    bigHeart.innerHTML = '❤';
+                    bigHeart.style.left = '50%';
+                    bigHeart.style.top = '50%';
+                    bigHeart.style.transform = 'translate(-50%, 0)';
+                    bigHeart.style.fontSize = '80px';
+                    bigHeart.style.textShadow = '0 0 20px rgba(231, 76, 60, 0.7)';
+                    container.appendChild(bigHeart);
+                    bigHeart.style.opacity = '1';
+                    
+                    createSparkleBurst(container, getPosition(bigHeart), 50);
+                    heartSound.play();
+                    createFloatingText(container, "Forever", getPosition(bigHeart));
+                }},
+                
+                // 16-20 seconds - Message appears
+                { time: 17000, action: () => {
+                    loveMessage.style.opacity = '1';
+                    loveMessage.style.transform = 'scale(1)';
+                    createSparkleBurst(container, getPosition(loveMessage), 40);
+                    heartSound.play();
+                    
+                    // Create final particle explosion
+                    for (let i = 0; i < 100; i++) {
+                        setTimeout(() => {
+                            createParticle(container, {
+                                x: Math.random() * 100 + '%',
+                                y: '50%'
+                            });
+                        }, i * 20);
+                    }
+                }}
+            ];
+            
+            // Execute timeline
+            timeline.forEach(event => {
+                setTimeout(event.action, event.time);
+            });
+            
+            // Create continuous floating hearts
+            const heartInterval = setInterval(() => {
+                createFloatingHeart(container, 0);
+            }, 800);
+            
+            // Reset after 20 seconds
+            setTimeout(() => {
+                clearInterval(heartInterval);
+                container.innerHTML = '';
+                container.style.display = 'none';
+                violinMusic.pause();
+            }, 20000);
+        }
+        
+        function createFloatingHeart(container, delay) {
+            const heart = document.createElement('div');
+            heart.className = 'floating-heart';
+            heart.innerHTML = '❤';
+            heart.style.left = Math.random() * 90 + 5 + '%';
+            heart.style.top = '110%';
+            heart.style.animationDelay = delay + 'ms';
+            heart.style.fontSize = (Math.random() * 30 + 20) + 'px';
+            heart.style.opacity = '0.8';
+            container.appendChild(heart);
+            
+            setTimeout(() => {
+                heart.style.opacity = '0.7';
+            }, delay + 100);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 6000 + delay);
+        }
+        
+        function createSparkleBurst(container, position, count) {
+            for (let i = 0; i < count; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * 60 + 20;
+                const x = position.x;
+                const y = position.y;
+                
+                sparkle.style.left = `calc(${x} + ${Math.cos(angle) * distance}px)`;
+                sparkle.style.top = `calc(${y} + ${Math.sin(angle) * distance}px)`;
+                sparkle.style.animationDelay = i * 0.02 + 's';
+                
+                container.appendChild(sparkle);
+                
+                setTimeout(() => {
+                    sparkle.remove();
+                }, 1200);
+            }
+        }
+        
+        function createParticle(container, position) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            
+            const size = Math.random() * 10 + 5;
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            particle.style.left = position.x;
+            particle.style.top = position.y;
+            
+            const angle = Math.random() * Math.PI * 2;
+            const distance = Math.random() * 100 + 50;
+            const duration = Math.random() * 3 + 2;
+            
+            container.appendChild(particle);
+            
+            setTimeout(() => {
+                particle.style.opacity = '0.8';
+                particle.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px)`;
+            }, 10);
+            
+            setTimeout(() => {
+                particle.style.opacity = '0';
+            }, duration * 800);
+            
+            setTimeout(() => {
+                particle.remove();
+            }, duration * 1000);
+        }
+        
+        function createParticleConnection(container, pos1, pos2, count) {
+            for (let i = 0; i < count; i++) {
+                setTimeout(() => {
+                    const progress = Math.random();
+                    const x = pos1.x.replace('%', '') * progress + pos2.x.replace('%', '') * (1 - progress);
+                    const y = pos1.y.replace('%', '') * progress + pos2.y.replace('%', '') * (1 - progress);
+                    
+                    createParticle(container, {
+                        x: x + '%',
+                        y: y + '%'
+                    });
+                }, i * 30);
+            }
+        }
+        
+        function createFloatingText(container, text, position) {
+            const element = document.createElement('div');
+            element.className = 'floating-text';
+            element.textContent = text;
+            element.style.left = position.x;
+            element.style.top = position.y;
+            element.style.fontSize = (Math.random() * 10 + 16) + 'px';
+            container.appendChild(element);
+            
+            setTimeout(() => {
+                element.remove();
+            }, 8000);
+        }
+        
+        function getPosition(element) {
+            const rect = element.getBoundingClientRect();
+            const container = document.getElementById('animation-container');
+            const containerRect = container.getBoundingClientRect();
+            
+            return {
+                x: ((rect.left + rect.width/2 - containerRect.left) / containerRect.width * 100) + '%',
+                y: ((rect.top + rect.height/2 - containerRect.top) / containerRect.height * 100) + '%'
+            };
+        }
+    </script>
+</body>
+</html>
